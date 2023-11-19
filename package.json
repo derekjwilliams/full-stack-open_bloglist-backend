@@ -4,9 +4,9 @@
   "description": "Full Stack Open Blog (part 4) backend",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "jest --verbose"
+    "start": "NODE_ENV=production node index.js",
+    "dev": "NODE_ENV=test nodemon index.js",
+    "test": "NODE_ENV=test jest --verbose --runInBand"
   },
   "author": "Derek J Williams",
   "license": "MIT",
