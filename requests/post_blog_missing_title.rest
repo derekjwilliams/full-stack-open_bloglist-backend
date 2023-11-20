@@ -2,7 +2,7 @@ POST http://localhost:3001/api/blogs
 content-type: application/json
 
 {
-  "title": "1",
+  "title": "v2.35.0-cloud.1 : Changelog",
   "author": "Hasura Team",
   "url": "https://hasura.io/changelog/cloud/v2.35.0-cloud.1",
   "likes": 0
