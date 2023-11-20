@@ -1,1 +1,1 @@
-GET http://localhost:3005/apiuuu/blogs
+GET http://localhost:3001/apiuuu/blogs

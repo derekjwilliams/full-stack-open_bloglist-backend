@@ -2,7 +2,6 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 const helper = require('./supertest_helper')
 const app = require('../app')
-
 const api = supertest(app)
 
 const Blog = require('../models/blog')
@@ -26,14 +25,12 @@ test('a blog can be added', async () => {
     .send(newBlog)
     .expect(201)
     .expect('Content-Type', /application\/json/)
-  
+
   const blogsAtEnd = await helper.blogsInDb()
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-  
-  const title = blogsAtEnd.map(r => r.title)
-  expect(title).toContain(
-    'PostGraphile V5 public beta — get involved!'
-  )
+
+  const title = blogsAtEnd.map((r) => r.title)
+  expect(title).toContain(newBlog.title)
 })
 
 test('blogs are returned as json', async () => {
@@ -41,6 +38,13 @@ test('blogs are returned as json', async () => {
     .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
+}, 10000)
+
+test('blogs all contain an id property', async () => {
+  const response = await api.get('/api/blogs')
+  for (let blog of response.body) {
+    expect(blog.id).toBeDefined()
+  }
 }, 10000)
 
 afterAll(async () => {
