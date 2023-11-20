@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+  "title": "v2.35.0-cloud.1 : Changelog",
+  "author": "Hasura Team",
+  "likes": 0
+}

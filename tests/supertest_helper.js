@@ -46,11 +46,34 @@ const newBlog = {
   likes: 0,
 }
 
+const newBlogMissingLikes = {
+  title: 'PostGraphile V5 public beta — get involved!',
+  author: 'Graphile Team',
+  url: 'https://www.graphile.org/news/20230803-postgraphile-v5-beta/',
+}
+
+const newBlogMissingTitle = {
+  author: 'Graphile Team',
+  url: 'https://www.graphile.org/news/20230803-postgraphile-v5-beta/',
+  likes: 0,
+}
+
+const newBlogMissingUrl = {
+  title: 'PostGraphile V5 public beta — get involved!',
+  author: 'Graphile Team',
+  likes: 0,
+}
+
 const blogsInDb = async () => {
   const blogs = await Blog.find({})
-  return blogs.map(blog => blog.toJSON())
+  return blogs.map((blog) => blog.toJSON())
 }
 
 module.exports = {
-  initialBlogs, newBlog, blogsInDb
+  initialBlogs,
+  newBlog,
+  blogsInDb,
+  newBlogMissingLikes,
+  newBlogMissingUrl,
+  newBlogMissingTitle,
 }

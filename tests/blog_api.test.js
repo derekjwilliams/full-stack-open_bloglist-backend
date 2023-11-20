@@ -33,6 +33,39 @@ test('a blog can be added', async () => {
   expect(title).toContain(newBlog.title)
 })
 
+test('a blog with a missing likes property is added with the likes property set to zero', async () => {
+  const newBlog = helper.newBlogMissingLikes
+
+  const postedBlog = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await helper.blogsInDb()
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+  expect(postedBlog.body.likes).toEqual(0)
+}, 10000)
+
+test('a blog with a missing title property causes a 400 error', async () => {
+  const newBlog = helper.newBlogMissingTitle
+
+  const postedBlog = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+}, 10000)
+
+test('a blog with a missing url property causes a 400 error', async () => {
+  const newBlog = helper.newBlogMissingUrl
+
+  const postedBlog = await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+}, 10000)
+
+
 test('blogs are returned as json', async () => {
   await api
     .get('/api/blogs')
