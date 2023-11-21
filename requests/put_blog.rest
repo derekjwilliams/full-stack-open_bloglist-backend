@@ -1,0 +1,9 @@
+PUT http://localhost:3001/api/blogs/655cefaeda33402c90ad3100
+content-type: application/json
+
+{
+  "title": "random",
+  "author": "Hasura Team",
+  "url": "aaaaa",
+  "likes": 3
+}

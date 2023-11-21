@@ -1,0 +1,4 @@
+DELETE http://localhost:3001/api/blogs/655bdfe1517c4171e2642ed2
+
+# Replace id (655bdfe1517c4171e2642ed2) above with an existing id from your database
+# Should get a 204 response
