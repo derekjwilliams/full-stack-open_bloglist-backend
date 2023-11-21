@@ -1,4 +1,4 @@
-const dummy = (blogs) => {
+const dummy = () => {
   return 1
 }
 
@@ -12,7 +12,7 @@ const favoriteBlog = (blogs) => {
   const result = blogs.reduce((accumulator, current) => {
     return accumulator?.likes > current.likes ? accumulator : current
   }, null)
-  return result;
+  return result
 }
 
 const mostBlogs = (blogs) => {
@@ -26,7 +26,7 @@ const mostBlogs = (blogs) => {
       blogCountByAuthor.set(blog.author, 1)
     }
   })
-  const sorted = new Map([...blogCountByAuthor.entries()].sort((count_a, count_b) => count_b[1] - count_a[1]));
+  const sorted = new Map([...blogCountByAuthor.entries()].sort((count_a, count_b) => count_b[1] - count_a[1]))
   const result = [...sorted][0]
   console.log(JSON.stringify(result))
   return {author: result[0], blogs: result[1]}
@@ -43,7 +43,8 @@ const authorMostLikes = (blogs) => {
       likesByAuthor.set(blog.author, blog.likes)
     }
   })
-  const sorted = new Map([...likesByAuthor.entries()].sort((likes_a, likes_b) => likes_b[1] - likes_a[1]));
+  
+  const sorted = new Map([...likesByAuthor.entries()].sort((likes_a, likes_b) => likes_b[1] - likes_a[1]))
   const result = [...sorted][0]
   console.log(JSON.stringify(result))
   return {author: result[0], likes: result[1]}

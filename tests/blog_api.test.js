@@ -63,38 +63,78 @@ describe('add blog', () => {
   test('a blog with a missing title property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingTitle
 
-    const postedBlog = await api.post('/api/blogs').send(newBlog).expect(400)
+    await api.post('/api/blogs').send(newBlog).expect(400)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   }, 10000)
 
   test('a blog with a missing url property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingUrl
 
-    const postedBlog = await api.post('/api/blogs').send(newBlog).expect(400)
+    await api.post('/api/blogs').send(newBlog).expect(400)
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   }, 10000)
 })
 
 describe('delete blog', () => {
   test('a blog can be deleted', async () => {
-    const startBlogs = await helper.blogsInDb()
-    const blog = startBlogs[0]
-  
-    await api
-      .delete(`/api/blogs/${blog.id}`)
-      .expect(204)
-  
-    const endBlogs = await helper.blogsInDb()
-  
-    expect(endBlogs).toHaveLength(
-      helper.initialBlogs.length - 1
-    )
-  
-    const titles = endBlogs.map(r => r.title)
-  
+    const blogsAtStart = await helper.blogsInDb()
+    const blog = blogsAtStart[0]
+
+    await api.delete(`/api/blogs/${blog.id}`).expect(204)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
+
+    const titles = blogsAtEnd.map((r) => r.title)
     expect(titles).not.toContainEqual(blog.title)
-  })
-  
+  }, 10000)
 })
-describe('update blog', () => {
+
+describe('blog updates', () => {
+  test('a blog can have its number of likes updated, uses ids from random blogs', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const count = blogsAtStart.length
+
+    // index of a random blog
+    const index = Math.floor(count * Math.random())
+    const blog = blogsAtStart[index]
+    const id = blog.id
+
+    // a random number of likes between 0 and 100
+    const likes = Math.round(Math.random() * 100)
+    blog.likes = likes
+
+    await api.put(`/api/blogs/${id}`).send(blog)
+    const updatedBlog = await api.get(`/api/blogs/${id}`)
+    expect(updatedBlog.body.likes).toBe(blog.likes)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(count)
+  }, 100000)
+
+  test('a blog can have its title updated, uses ids from random blogs', async () => {
+    const blogsAtStart = await helper.blogsInDb()
+    const count = blogsAtStart.length
+
+    // index of a random blog
+    const index = Math.floor(count * Math.random())
+    const blog = blogsAtStart[index]
+    const id = blog.id
+
+    // a random title
+    const title = 'random title ' + (index * Math.random())
+    blog.title = title
+
+    await api.put(`/api/blogs/${id}`).send(blog)
+    const updatedBlog = await api.get(`/api/blogs/${id}`)
+    expect(updatedBlog.body.title).toBe(blog.title)
+
+    const blogsAtEnd = await helper.blogsInDb()
+    expect(blogsAtEnd).toHaveLength(count)
+  }, 100000)
 })
 
 afterAll(async () => {
