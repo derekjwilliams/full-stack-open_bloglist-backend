@@ -1,0 +1,11 @@
+
+POST http://localhost:3001/api/blogs
+content-type: application/json
+
+{
+  "title": "Test Blog Entry",
+  "author": "Derek Williams",
+  "url": "https://soto.podaac.earthdatacloud.nasa.gov/?v=-301.7396635888,-132.8645101122633,-49.96540178764417,128.74468379050018&t=2023-11-20-T22%3A00%3A00Z",
+  "likes": 0,
+  "userId": "6560ec3ce1eae48cf6dc1858"
+}
