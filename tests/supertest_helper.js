@@ -1,5 +1,14 @@
 const Blog = require('../models/blog')
+const User = require('../models/user')
+const Timeout = 10000
 
+const initialUsers = [
+  {
+    username: 'ringo',
+    password: 'RSsudAY8XWF8sJol20t2rjyT',
+    name: 'Ringo Starr',
+  },
+]
 const initialBlogs = [
   {
     title: 'React patterns',
@@ -69,11 +78,48 @@ const blogsInDb = async () => {
   return blogs.map((blog) => blog.toJSON())
 }
 
+// user helpers
+
+const usersInDb = async () => {
+  const users = await User.find({})
+  return users.map((user) => user.toJSON())
+}
+
+const newUserTooShortUsername = {
+  username: 'T',
+  password: 'RSsudAY8XWF8sJol20t2rjyTTina',
+  name: 'Tina Weymouth',
+}
+
+const newUserTooShortPassword = {
+  username: 'Tina',
+  password: 'RS',
+  name: 'Tina Weymouth',
+}
+
+const newUserMissingUsername = {
+  password: 'RSsudAY8XWF8sJol20t2rjyTTina',
+  name: 'Tina Weymouth',
+}
+
+const newUserMissingPassword = {
+  username: 'Tina',
+  name: 'Tina Weymouth',
+}
+
+
 module.exports = {
+  Timeout,
   initialBlogs,
   newBlog,
   blogsInDb,
   newBlogMissingLikes,
   newBlogMissingUrl,
   newBlogMissingTitle,
+  initialUsers,
+  usersInDb,
+  newUserMissingUsername,
+  newUserMissingPassword,
+  newUserTooShortUsername,
+  newUserTooShortPassword
 }
