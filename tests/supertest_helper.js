@@ -85,6 +85,13 @@ const usersInDb = async () => {
   return users.map((user) => user.toJSON())
 }
 
+const newUserDuplicateUsername =   {
+  username: 'ringo',
+  password: 'RSsudAY8XWF8sJol20t2rjyT',
+  name: 'Ringo Starr',
+}
+
+
 const newUserTooShortUsername = {
   username: 'T',
   password: 'RSsudAY8XWF8sJol20t2rjyTTina',
@@ -121,5 +128,6 @@ module.exports = {
   newUserMissingUsername,
   newUserMissingPassword,
   newUserTooShortUsername,
-  newUserTooShortPassword
+  newUserTooShortPassword,
+  newUserDuplicateUsername
 }

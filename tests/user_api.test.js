@@ -17,6 +17,7 @@ describe('invalid users do not get added', () => {
   test(
     'a user with a missing username property is not added',
     async () => {
+      const usersAtStart = await helper.usersInDb()
       const newUser = helper.newUserMissingUsername
 
       const result = await api.post('/api/users').send(newUser).expect(400)
@@ -24,7 +25,7 @@ describe('invalid users do not get added', () => {
       expect(result.body.error).toContain('`username` is required.')
 
       const usersAtEnd = await helper.usersInDb()
-      expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
+      expect(usersAtEnd).toEqual(usersAtStart)
     },
     helper.Timeout
   )
@@ -32,6 +33,7 @@ describe('invalid users do not get added', () => {
   test(
     'a user with a missing password property is not added',
     async () => {
+      const usersAtStart = await helper.usersInDb()
       const newUser = helper.newUserMissingPassword
 
       const result = await api.post('/api/users').send(newUser).expect(400)
@@ -39,7 +41,7 @@ describe('invalid users do not get added', () => {
       expect(result.body.error).toContain('password is required')
 
       const usersAtEnd = await helper.usersInDb()
-      expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
+      expect(usersAtEnd).toEqual(usersAtStart)
     },
     helper.Timeout
   )
@@ -47,6 +49,7 @@ describe('invalid users do not get added', () => {
   test(
     'a user with a too short username is not added',
     async () => {
+      const usersAtStart = await helper.usersInDb()
       const newUser = helper.newUserTooShortUsername
 
       const result = await api.post('/api/users').send(newUser).expect(400)
@@ -57,7 +60,7 @@ describe('invalid users do not get added', () => {
       )
 
       const usersAtEnd = await helper.usersInDb()
-      expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
+      expect(usersAtEnd).toEqual(usersAtStart)
     },
     helper.Timeout
   )
@@ -65,6 +68,8 @@ describe('invalid users do not get added', () => {
   test(
     'a user with a too short password is not added',
     async () => {
+      const usersAtStart = await helper.usersInDb()
+
       const newUser = helper.newUserTooShortPassword
 
       const result = await api.post('/api/users').send(newUser).expect(400)
@@ -72,10 +77,26 @@ describe('invalid users do not get added', () => {
       expect(result.body.error).toContain('password is too short')
 
       const usersAtEnd = await helper.usersInDb()
-      expect(usersAtEnd).toHaveLength(helper.initialUsers.length)
+      expect(usersAtEnd).toEqual(usersAtStart)
     },
     helper.Timeout
   )
+  test('a user with a duplicate name is not added', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = helper.newUserDuplicateUsername
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    expect(result.body.error).toContain('expected `username` to be unique')
+
+    const usersAtEnd = await helper.usersInDb()
+    expect(usersAtEnd).toEqual(usersAtStart)
+  })
 })
 
 describe('get users', () => {
