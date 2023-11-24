@@ -4,6 +4,7 @@ require('express-async-errors')
 const app = express()
 const cors = require('cors')
 const blogsRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 const middleware = require('./utils/middleware')
 const logger = require('./utils/logger')
 const mongoose = require('mongoose')
@@ -22,7 +23,9 @@ app.use(express.static('dist')) // for integrating front end
 app.use(express.json())
 app.use(middleware.requestLogger) // important, this needs to be before the router
 
-app.use('/api/blogs', blogsRouter) // for routing
+// Routing
+app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 // important, these need to be at the end
 app.use(middleware.unknownEndpoint)
