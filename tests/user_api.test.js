@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const helper = require('./supertest_helper')
 const app = require('../app')
 const api = supertest(app)
+const bcrypt = require('bcrypt')
 
 const User = require('../models/user')
 
@@ -10,7 +11,14 @@ const User = require('../models/user')
 // Uses the test database, see utils/config.js, package.json, and .env
 beforeEach(async () => {
   await User.deleteMany({})
-  await User.insertMany(helper.initialUsers)
+
+  const oneUser = helper.initialUsers[0] // only one user to start
+  const passwordHash = await bcrypt.hash(oneUser.password, 10)
+  const user = new User({ username: oneUser.username, passwordHash })
+
+  await user.save()
+
+  // await User.insertMany(helper.initialUsers)
 })
 
 describe('invalid users do not get added', () => {

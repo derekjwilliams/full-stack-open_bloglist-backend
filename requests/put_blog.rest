@@ -1,6 +1,6 @@
 PUT http://localhost:3001/api/blogs/655cefaeda33402c90ad3100
 content-type: application/json
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJpbmdvIiwiaWQiOiI2NTYxMGVmOGMwNzY5MmQwMDk3ODdhZjEiLCJpYXQiOjE3MDA5MjA5MTcsImV4cCI6MTcwMDkyMDk3N30.xCGyDK48pGGmeRt3hPqO7UjSraA2OVN4lJxjKBtbNHw
 {
   "title": "random",
   "author": "Hasura Team",

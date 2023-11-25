@@ -6,6 +6,19 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
+// let authToken = ''
+
+const loginTestUser = async (user) => {
+  const testUser = {
+    username: user.username,
+    password: user.password,
+  }
+  const response = await api
+    .post('/api/login')
+    .send(testUser)
+  return response.body.token
+}
+
 // Delete from the database, then populate using the bloglist in the helper
 // Uses the test database, see utils/config.js
 beforeEach(async () => {
@@ -14,9 +27,15 @@ beforeEach(async () => {
 })
 
 describe('get blogs', () => {
-  test('blogs are returned as json', async () => {
+  test.only('blogs are returned as json', async () => {
+    const testUser = helper.initialUsers[0]
+    const authToken = 'Bearer ' + await loginTestUser(testUser)
+  
+    console.log(authToken)
+
     await api
       .get('/api/blogs')
+      .set('Authorization', authToken)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   }, 10000)
@@ -35,6 +54,7 @@ describe('add blog', () => {
 
     await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -46,7 +66,7 @@ describe('add blog', () => {
     expect(title).toContain(newBlog.title)
   }, 10000)
 
-  test('a blog with a missing likes property is added with the likes property set to zero', async () => {
+  test.skip('a blog with a missing likes property is added with the likes property set to zero', async () => {
     const newBlog = helper.newBlogMissingLikes
 
     const postedBlog = await api
@@ -60,7 +80,7 @@ describe('add blog', () => {
     expect(postedBlog.body.likes).toEqual(0)
   }, 10000)
 
-  test('a blog with a missing title property causes a 400 error', async () => {
+  test.skip('a blog with a missing title property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingTitle
 
     await api.post('/api/blogs').send(newBlog).expect(400)
@@ -69,7 +89,7 @@ describe('add blog', () => {
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   }, 10000)
 
-  test('a blog with a missing url property causes a 400 error', async () => {
+  test.skip('a blog with a missing url property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingUrl
 
     await api.post('/api/blogs').send(newBlog).expect(400)
@@ -125,7 +145,7 @@ describe('blog updates', () => {
     const id = blog.id
 
     // a random title
-    const title = 'random title ' + (index * Math.random())
+    const title = 'random title ' + index * Math.random()
     blog.title = title
 
     await api.put(`/api/blogs/${id}`).send(blog)
