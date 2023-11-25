@@ -1,11 +1,14 @@
 
 POST http://localhost:3001/api/blogs
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJpbmdvIiwiaWQiOiI2NTYxMGVmOGMwNzY5MmQwMDk3ODdhZjEiLCJpYXQiOjE3MDA5MjA5MTcsImV4cCI6MTcwMDkyMDk3N30.xCGyDK48pGGmeRt3hPqO7UjSraA2OVN4lJxjKBtbNHw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJpbmdvIiwiaWQiOiI2NTYwZjMzOGRiNTI1YTI2NDQ4YWI1ZTAiLCJpYXQiOjE3MDA4NTcwOTF9.o7HLGrylyDHKlOJS9B6DlRyOa2g7XxgdFwQieLOD0KY
+
 {
   "title": "Test Blog Entry",
   "author": "Derek Williams",
   "url": "https://soto.podaac.earthdatacloud.nasa.gov/?v=-301.7396635888,-132.8645101122633,-49.96540178764417,128.74468379050018&t=2023-11-20-T22%3A00%3A00Z",
   "likes": 0,
-  "userId": "6560f338db525a26448ab5e0"
+  "userId": "656200351279580f0616c688"
 }
+
+#replace token with valid token

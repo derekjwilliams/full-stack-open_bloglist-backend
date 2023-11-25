@@ -6,16 +6,12 @@ const api = supertest(app)
 
 const Blog = require('../models/blog')
 
-// let authToken = ''
-
 const loginTestUser = async (user) => {
   const testUser = {
     username: user.username,
     password: user.password,
   }
-  const response = await api
-    .post('/api/login')
-    .send(testUser)
+  const response = await api.post('/api/login').send(testUser)
   return response.body.token
 }
 
@@ -27,11 +23,9 @@ beforeEach(async () => {
 })
 
 describe('get blogs', () => {
-  test.only('blogs are returned as json', async () => {
-    const testUser = helper.initialUsers[0]
-    const authToken = 'Bearer ' + await loginTestUser(testUser)
-  
-    console.log(authToken)
+  const testUser = helper.initialUsers[0]
+  test('blogs are returned as json', async () => {
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
 
     await api
       .get('/api/blogs')
@@ -41,7 +35,10 @@ describe('get blogs', () => {
   }, 10000)
 
   test('blogs all contain an id property', async () => {
-    const response = await api.get('/api/blogs')
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
+
+    const response = await api.get('/api/blogs').set('Authorization', authToken)
+
     for (let blog of response.body) {
       expect(blog.id).toBeDefined()
     }
@@ -49,7 +46,10 @@ describe('get blogs', () => {
 })
 
 describe('add blog', () => {
+  const testUser = helper.initialUsers[0]
   test('a blog can be added', async () => {
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
+
     const newBlog = helper.newBlog
 
     await api
@@ -66,11 +66,13 @@ describe('add blog', () => {
     expect(title).toContain(newBlog.title)
   }, 10000)
 
-  test.skip('a blog with a missing likes property is added with the likes property set to zero', async () => {
+  test('a blog with a missing likes property is added with the likes property set to zero', async () => {
     const newBlog = helper.newBlogMissingLikes
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
 
     const postedBlog = await api
       .post('/api/blogs')
+      .set('Authorization', authToken)
       .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -80,30 +82,43 @@ describe('add blog', () => {
     expect(postedBlog.body.likes).toEqual(0)
   }, 10000)
 
-  test.skip('a blog with a missing title property causes a 400 error', async () => {
+  test('a blog with a missing title property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingTitle
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', authToken)
+      .send(newBlog)
+      .expect(400)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   }, 10000)
 
-  test.skip('a blog with a missing url property causes a 400 error', async () => {
+  test('a blog with a missing url property causes a 400 error', async () => {
     const newBlog = helper.newBlogMissingUrl
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
 
-    await api.post('/api/blogs').send(newBlog).expect(400)
+    await api
+      .post('/api/blogs')
+      .set('Authorization', authToken)
+      .send(newBlog)
+      .expect(400)
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
   }, 10000)
 })
 
 describe('delete blog', () => {
+  const testUser = helper.initialUsers[0]
   test('a blog can be deleted', async () => {
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
+
     const blogsAtStart = await helper.blogsInDb()
     const blog = blogsAtStart[0]
 
-    await api.delete(`/api/blogs/${blog.id}`).expect(204)
+    await api.delete(`/api/blogs/${blog.id}`).set('Authorization', authToken).expect(204)
 
     const blogsAtEnd = await helper.blogsInDb()
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length - 1)
@@ -114,7 +129,10 @@ describe('delete blog', () => {
 })
 
 describe('blog updates', () => {
+  const testUser = helper.initialUsers[0]
   test('a blog can have its number of likes updated, uses ids from random blogs', async () => {
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
+
     const blogsAtStart = await helper.blogsInDb()
     const count = blogsAtStart.length
 
@@ -127,8 +145,8 @@ describe('blog updates', () => {
     const likes = Math.round(Math.random() * 100)
     blog.likes = likes
 
-    await api.put(`/api/blogs/${id}`).send(blog)
-    const updatedBlog = await api.get(`/api/blogs/${id}`)
+    await api.put(`/api/blogs/${id}`).set('Authorization', authToken).send(blog)
+    const updatedBlog = await api.get(`/api/blogs/${id}`).set('Authorization', authToken)
     expect(updatedBlog.body.likes).toBe(blog.likes)
 
     const blogsAtEnd = await helper.blogsInDb()
@@ -136,6 +154,8 @@ describe('blog updates', () => {
   }, 100000)
 
   test('a blog can have its title updated, uses ids from random blogs', async () => {
+    const authToken = 'Bearer ' + (await loginTestUser(testUser))
+
     const blogsAtStart = await helper.blogsInDb()
     const count = blogsAtStart.length
 
@@ -148,8 +168,8 @@ describe('blog updates', () => {
     const title = 'random title ' + index * Math.random()
     blog.title = title
 
-    await api.put(`/api/blogs/${id}`).send(blog)
-    const updatedBlog = await api.get(`/api/blogs/${id}`)
+    await api.put(`/api/blogs/${id}`).send(blog).set('Authorization', authToken)
+    const updatedBlog = await api.get(`/api/blogs/${id}`).set('Authorization', authToken)
     expect(updatedBlog.body.title).toBe(blog.title)
 
     const blogsAtEnd = await helper.blogsInDb()
